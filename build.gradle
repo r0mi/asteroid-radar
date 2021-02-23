@@ -15,6 +15,7 @@ buildscript {
         picasso_version = '2.5.2'
         room_version = '2.2.6'
         work_version = '1.0.1'
+        timber_version = '4.7.1'
     }
     repositories {
         google()
