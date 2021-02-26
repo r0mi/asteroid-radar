@@ -2,10 +2,15 @@ package com.udacity.asteroidradar.api
 
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
+import okhttp3.ResponseBody
 import org.json.JSONObject
+import retrofit2.Converter
+import retrofit2.Response
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
     val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")
@@ -33,8 +38,10 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
             val isPotentiallyHazardous = asteroidJson
                 .getBoolean("is_potentially_hazardous_asteroid")
 
-            val asteroid = Asteroid(id, codename, formattedDate, absoluteMagnitude,
-                estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous)
+            val asteroid = Asteroid(
+                id, codename, formattedDate, absoluteMagnitude,
+                estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous
+            )
             asteroidList.add(asteroid)
         }
     }
@@ -54,4 +61,19 @@ private fun getNextSevenDaysFormattedDates(): ArrayList<String> {
     }
 
     return formattedDateList
+}
+
+fun parseError(response: Response<*>?): APIError? {
+    return response?.let {
+        val converter: Converter<ResponseBody, APIErrorWrapper> = Network.retrofit
+            .responseBodyConverter(APIErrorWrapper::class.java, arrayOfNulls<Annotation>(0))
+        val errorWrapper: APIErrorWrapper? = try {
+            it.errorBody()?.let { errorBody ->
+                converter.convert(errorBody)
+            } ?: throw IOException("No error body")
+        } catch (e: IOException) {
+            null
+        }
+        errorWrapper?.error
+    }
 }
