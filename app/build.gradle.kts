@@ -77,6 +77,7 @@ dependencies {
     // Moshi
     implementation("com.squareup.moshi:moshi:${Squareup.moshi}")
     implementation("com.squareup.moshi:moshi-kotlin:${Squareup.moshi}")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:${Squareup.moshi}")
 
     // Retrofit - Deprecated plugins - No more required
     // implementation("com.squareup.retrofit2:retrofit:${Squareup.retrofit}")

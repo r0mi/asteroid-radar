@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.api
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
@@ -10,6 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 import timber.log.Timber
 
 /**
@@ -18,6 +20,9 @@ import timber.log.Timber
 interface NASAService {
     @GET("planetary/apod")
     suspend fun getPictureOfDay(): PictureOfDay
+
+    @GET("neo/rest/v1/feed")
+    suspend fun getAsteroids(@Query("start_date") startDate: String): List<Asteroid>
 }
 
 /**
@@ -25,7 +30,8 @@ interface NASAService {
  * full Kotlin compatibility.
  */
 private val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory())
+    .add(AsteroidAdapter())
+    .addLast(KotlinJsonAdapterFactory())
     .build()
 
 /**
