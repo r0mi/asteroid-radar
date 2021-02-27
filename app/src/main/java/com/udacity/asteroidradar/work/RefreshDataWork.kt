@@ -34,7 +34,6 @@ class RefreshDataWorker(appContext: Context, params: WorkerParameters):
     override suspend fun doWork(): Result {
         val database = getDatabase(applicationContext)
         val repository = AsteroidRadarRepository(database)
-        Timber.e("Running worker")
         return try {
             repository.refreshPictureOfDay()
             Result.success()
