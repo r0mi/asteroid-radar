@@ -1,10 +1,7 @@
 package com.udacity.asteroidradar.api
 
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.squareup.moshi.ToJson
-import com.udacity.asteroidradar.Asteroid
 
 @JsonClass(generateAdapter = true)
 data class RelativeVelocity(

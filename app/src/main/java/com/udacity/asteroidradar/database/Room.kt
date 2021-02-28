@@ -6,24 +6,35 @@ import androidx.room.*
 
 @Dao
 interface AsteroidRadarDao {
-    @Query("select * from databasepictureofday limit 1")
+    @Query("select * from picture_of_day limit 1")
     fun getFirstPictureOfDay(): LiveData<DatabasePictureOfDay>
 
-    @Query("select exists(select * from databasepictureofday where url = :url)")
+    @Query("select exists(select * from picture_of_day where url = :url)")
     suspend fun pictureOfDayExists(url: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPictureOfDay(picture: DatabasePictureOfDay)
 
-    @Query("DELETE FROM databasepictureofday")
+    @Query("DELETE FROM picture_of_day")
     suspend fun deletePicturesOfDay()
+
+    @Query("select * from asteroid")
+    fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllAsteroids(vararg asteroids: DatabaseAsteroid)
+
+    @Query("DELETE FROM asteroid WHERE close_approach_date < :timestamp")
+    suspend fun deleteOlderAsteroidsThan(timestamp: Long)
 }
 
-@Database(entities = [DatabasePictureOfDay::class], version = 1)
+@Database(entities = [DatabasePictureOfDay::class, DatabaseAsteroid::class], version = 2, exportSchema = false)
+@TypeConverters(CalendarConverter::class)
 abstract class AsteroidRadarDatabase : RoomDatabase() {
     abstract val asteroidRadarDao: AsteroidRadarDao
 }
 
+@Volatile
 private lateinit var INSTANCE: AsteroidRadarDatabase
 
 fun getDatabase(context: Context): AsteroidRadarDatabase {
@@ -32,8 +43,10 @@ fun getDatabase(context: Context): AsteroidRadarDatabase {
             INSTANCE = Room.databaseBuilder(
                 context.applicationContext,
                 AsteroidRadarDatabase::class.java,
-                "asteroid_radar"
-            ).build()
+                "asteroid_radar_database"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
     }
     return INSTANCE

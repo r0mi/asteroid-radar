@@ -12,6 +12,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val pictureOfDay = repository.pictureOfDay
 
+    val asteroids = repository.asteroids
+
     val pictureOfDayUrl: LiveData<String?> = Transformations.map(pictureOfDay) {
         it?.url
     }
@@ -23,6 +25,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         viewModelScope.launch {
             repository.refreshPictureOfDay()
+            repository.refreshAsteroids()
         }
     }
 }

@@ -2,6 +2,8 @@ package com.udacity.asteroidradar.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.Network
 import com.udacity.asteroidradar.api.parseError
@@ -13,12 +15,19 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AsteroidRadarRepository(private val database: AsteroidRadarDatabase) {
 
     val pictureOfDay: LiveData<PictureOfDay?> =
         Transformations.map(database.asteroidRadarDao.getFirstPictureOfDay()) {
             it?.asDomainModel()
+        }
+
+    val asteroids: LiveData<List<Asteroid>> =
+        Transformations.map(database.asteroidRadarDao.getAsteroids()) {
+            it.asDomainModel()
         }
 
     suspend fun refreshPictureOfDay() {
@@ -40,6 +49,25 @@ class AsteroidRadarRepository(private val database: AsteroidRadarDatabase) {
                 } ?: Timber.e(e)
             } catch (e: IOException) {
                 Timber.e("Error getting picture of the day: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun refreshAsteroids() {
+        withContext(Dispatchers.IO) {
+            try {
+                val calendar = Calendar.getInstance()
+                val currentTime = calendar.time
+                val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
+                val asteroids = Network.nasa.getAsteroids(dateFormat.format(currentTime))
+                database.asteroidRadarDao.insertAllAsteroids(*asteroids.asDatabaseModel())
+                database.asteroidRadarDao.deleteOlderAsteroidsThan(currentTime.time)
+            } catch (e: HttpException) {
+                parseError(e.response())?.let {
+                    Timber.e("Error getting asteroids: ${it.message}")
+                } ?: Timber.e(e)
+            } catch (e: IOException) {
+                Timber.e("Error getting asteroids: ${e.message}")
             }
         }
     }
