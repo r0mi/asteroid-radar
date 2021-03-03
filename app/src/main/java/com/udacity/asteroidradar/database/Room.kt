@@ -18,8 +18,8 @@ interface AsteroidRadarDao {
     @Query("DELETE FROM picture_of_day")
     suspend fun deletePicturesOfDay()
 
-    @Query("select * from asteroid")
-    fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
+    @Query("select * from asteroid WHERE close_approach_date >= :timestamp ORDER BY close_approach_date ASC")
+    fun getAsteroids(timestamp: Long): LiveData<List<DatabaseAsteroid>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllAsteroids(vararg asteroids: DatabaseAsteroid)

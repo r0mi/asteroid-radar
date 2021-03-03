@@ -26,7 +26,7 @@ class AsteroidRadarRepository(private val database: AsteroidRadarDatabase) {
         }
 
     val asteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidRadarDao.getAsteroids()) {
+        Transformations.map(database.asteroidRadarDao.getAsteroids(Calendar.getInstance().timeInMillis)) {
             it.asDomainModel()
         }
 
