@@ -90,10 +90,10 @@ class AsteroidRadarRepository(private val database: AsteroidRadarDatabase) {
         }
     }
 
-    suspend fun refreshAsteroids(): String {
-        return withContext(Dispatchers.IO) {
+    suspend fun refreshAsteroids() {
+        withContext(Dispatchers.IO) {
             _status.postValue(AsteroidRadarApiStatus.LOADING)
-            return@withContext try {
+            try {
                 val calendar = Calendar.getInstance().apply {
                     set(Calendar.HOUR_OF_DAY, 0)
                     set(Calendar.MINUTE, 0)
@@ -111,17 +111,14 @@ class AsteroidRadarRepository(private val database: AsteroidRadarDatabase) {
                 )
                 database.asteroidRadarDao.insertAllAsteroids(*asteroids.asDatabaseModel())
                 _status.postValue(AsteroidRadarApiStatus.DONE)
-                ""
             } catch (e: HttpException) {
                 _status.postValue(AsteroidRadarApiStatus.ERROR)
                 parseError(e.response())?.let {
                     Timber.e("Error getting asteroids: ${it.message}")
                 } ?: Timber.e(e)
-                e.message ?: ""
             } catch (e: IOException) {
                 _status.postValue(AsteroidRadarApiStatus.ERROR)
                 Timber.e("Error getting asteroids: ${e.message}")
-                e.message ?: ""
             }
         }
     }
