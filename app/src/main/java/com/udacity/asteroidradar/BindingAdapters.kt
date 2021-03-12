@@ -21,9 +21,11 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
 @BindingAdapter("statusIconContentDescription")
 fun bindAsteroidStatusImageContentDescription(imageView: ImageView, isHazardous: Boolean) {
     if (isHazardous) {
-        imageView.contentDescription = imageView.context.getString(R.string.potentially_hazardous_asteroid_image)
+        imageView.contentDescription =
+            imageView.context.getString(R.string.potentially_hazardous_asteroid_image)
     } else {
-        imageView.contentDescription = imageView.context.getString(R.string.not_hazardous_asteroid_image)
+        imageView.contentDescription =
+            imageView.context.getString(R.string.not_hazardous_asteroid_image)
     }
 }
 
@@ -46,9 +48,13 @@ fun bindPictureOfDayImage(imageView: ImageView, pictureOfDay: PictureOfDay?) {
 @BindingAdapter("pictureOfDayImageContentDescription")
 fun bindPictureOfDayImageContentDescription(imageView: ImageView, pictureOfDay: PictureOfDay?) {
     if (pictureOfDay != null) {
-        imageView.contentDescription = imageView.context.getString(R.string.nasa_picture_of_day_content_description_format, pictureOfDay.title)
+        imageView.contentDescription = imageView.context.getString(
+            R.string.nasa_picture_of_day_content_description_format,
+            pictureOfDay.title
+        )
     } else {
-        imageView.contentDescription = imageView.context.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet)
+        imageView.contentDescription =
+            imageView.context.getString(R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet)
     }
 }
 

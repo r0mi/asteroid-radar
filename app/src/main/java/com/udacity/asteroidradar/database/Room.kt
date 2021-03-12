@@ -28,7 +28,11 @@ interface AsteroidRadarDao {
     suspend fun deleteOlderAsteroidsThan(timestamp: Long)
 }
 
-@Database(entities = [DatabasePictureOfDay::class, DatabaseAsteroid::class], version = 2, exportSchema = false)
+@Database(
+    entities = [DatabasePictureOfDay::class, DatabaseAsteroid::class],
+    version = 2,
+    exportSchema = false
+)
 @TypeConverters(CalendarConverter::class)
 abstract class AsteroidRadarDatabase : RoomDatabase() {
     abstract val asteroidRadarDao: AsteroidRadarDao

@@ -41,7 +41,10 @@ fun List<DatabaseAsteroid>.asDomainModel() = map {
     Asteroid(
         id = it.id,
         codename = it.name,
-        closeApproachDate = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault()).format(it.closeApproachDate.timeInMillis),
+        closeApproachDate = SimpleDateFormat(
+            Constants.API_QUERY_DATE_FORMAT,
+            Locale.getDefault()
+        ).format(it.closeApproachDate.timeInMillis),
         absoluteMagnitude = it.absoluteMagnitude,
         estimatedDiameter = it.estimatedDiameter,
         relativeVelocity = it.relativeVelocity,
