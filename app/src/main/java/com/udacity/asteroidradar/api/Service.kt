@@ -22,7 +22,7 @@ interface NASAService {
     suspend fun getPictureOfDay(): PictureOfDay
 
     @GET("neo/rest/v1/feed")
-    suspend fun getAsteroids(@Query("start_date") startDate: String): List<Asteroid>
+    suspend fun getAsteroids(@Query("start_date") startDate: String, @Query("end_date") endDate: String): List<Asteroid>
 }
 
 /**
