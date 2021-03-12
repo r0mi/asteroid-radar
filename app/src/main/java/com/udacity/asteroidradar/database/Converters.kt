@@ -12,5 +12,5 @@ object CalendarConverter {
 
     @JvmStatic
     @TypeConverter
-    fun fromCalendar(value: Calendar): Long = value.time.time
+    fun fromCalendar(value: Calendar): Long = value.timeInMillis
 }
