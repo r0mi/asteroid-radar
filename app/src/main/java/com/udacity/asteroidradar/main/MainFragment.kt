@@ -2,37 +2,12 @@ package com.udacity.asteroidradar.main
 
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.squareup.picasso.Picasso
+import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
-
-fun ImageView.loadImage(url: String) {
-    val circularProgressDrawable = CircularProgressDrawable(context)
-    circularProgressDrawable.apply {
-        strokeWidth = 10f
-        centerRadius = 60f
-        setColorSchemeColors(
-            ContextCompat.getColor(context, R.color.colorAccent)
-        )
-        start()
-    }
-
-    Picasso
-        .Builder(context)
-        .indicatorsEnabled(true)
-        .build()
-        .load(url)
-        .fit()
-        .centerCrop()
-        .placeholder(circularProgressDrawable)
-        .error(R.drawable.ic_broken_image)
-        .into(this)
-}
+import com.udacity.asteroidradar.repository.AsteroidFilter
 
 class MainFragment : Fragment() {
 
@@ -50,13 +25,18 @@ class MainFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        setHasOptionsMenu(true)
+        binding.asteroidRecycler.adapter = AsteroidListAdapter(AsteroidListAdapter.OnClickListener {
+            viewModel.displayAsteroidDetails(it)
+        })
 
-        viewModel.pictureOfDayUrl.observe(viewLifecycleOwner, { url ->
-            if (url != null) {
-                binding.activityMainImageOfTheDay.loadImage(url)
+        viewModel.navigateToSelectedAsteroid.observe(viewLifecycleOwner, {
+            if (null != it) {
+                this.findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
+                viewModel.displayAsteroidDetailsComplete()
             }
         })
+
+        setHasOptionsMenu(true)
 
         return binding.root
     }
@@ -67,6 +47,13 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        viewModel.updateFilter(
+            when (item.itemId) {
+                R.id.show_today_menu -> AsteroidFilter.SHOW_TODAY
+                R.id.show_saved_menu -> AsteroidFilter.SHOW_SAVED
+                else -> AsteroidFilter.SHOW_WEEK
+            }
+        )
         return true
     }
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="asteroid"
+            type="com.udacity.asteroidradar.Asteroid" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/keyline_4"
+        tools:background="@color/app_background">
+
+        <TextView
+            android:id="@+id/name_text"
+            style="@style/AsteroidName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{asteroid.codename}"
+            app:layout_constraintBottom_toTopOf="@+id/close_approach_date_text"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="(2017 RV15)" />
+
+        <TextView
+            android:id="@+id/close_approach_date_text"
+            style="@style/AsteroidApproachDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/keyline_1"
+            android:text="@{asteroid.closeApproachDate}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/name_text"
+            app:layout_constraintTop_toBottomOf="@+id/name_text"
+            tools:text="2021-03-05" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            statusIcon="@{asteroid.potentiallyHazardous}"
+            statusIconContentDescription="@{asteroid.potentiallyHazardous}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/name_text"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_status_potentially_hazardous" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
